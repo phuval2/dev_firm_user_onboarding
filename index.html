@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Firm User Onboarding Form</title>
+  <style>
+    fieldset {
+      margin-bottom: 30px;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    .subcategory {
+      margin-left: 20px;
+    }
+    .jurisdiction-divider {
+      border-top: 1px solid #999;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .jurisdiction-block {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .jurisdiction-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: end;
+    }
+  </style>
+  <script>
+    const subcategoriesMap = {
+      "Business": ["Business Dispute Assistance", "Contract Dispute Assistance", "Contract Drafting: Complex", "Contract Drafting: Intermediate", "Contract Drafting: Simple", "Contract Review and Advice (Up to 5 Pages)", "Contract Review and Advice (Up to 10 Pages)", "Contract Review and Advice (Up to 20 Pages)", "Debt Collection Assistance"],
+      "Employment": ["Employment Contract Review - Intermediate", "Employment Contract Review - Junior", "Employment Contract Review - Senior", "Employment Law Advice", "Settlement Agreement Review and Advice", "Severance Pay Review and Advice", "Wrongful Termination Review and Advice"],
+      "Estate Planning": ["Advance Medical Directives", "Amendment of an Existing Trust", "Codicil Drafting (Standard)", "Comprehensive Revocable Trust Package (Couple)", "Comprehensive Will Drafting", "Contested Probate Consultation", "Durable Power of Attorney", "Estate Planning Package (Complete)", "Estate Planning Package (Comprehensive)", "Estate Planning Package (Standard)", "Irrevocable Trust", "Medical Power of Attorney", "Probate Consultation", "Revocable Trust", "Revocable Trust with Pour-over Will", "Simple Will Drafting", "Simple Will Package (Couple)", "Standard Revocable Trust Package (Couple)", "Will Review (Complex)", "Will Review (Standard)"],
+      "Family Law": ["Complex Prenuptial Drafting", "Contested Divorce Consultation", "Divorce Consultation (Expedited)", "Family Attorney Advice", "Family Legal Letter", "File a Name Change Petition (Adult)", "File a Name Change Petition (Child)", "Grandparent Rights Advice", "Marital Separation Agreement (Full Service)", "Marital Separation Agreement Drafting", "Marital Separation Agreement Review", "Negotiated Prenuptial Agreement", "Prenuptial Agreement Review and Advice", "Simple Postnuptial Agreement", "Simple Prenuptial Drafting", "Uncontested Child Custody Order", "Uncontested Child Custody Order (Modification)", "Uncontested Divorce (Petition Only)", "Uncontested Divorce Filing (No Minor Children)", "Uncontested Divorce Filing (With Minor Children)", "Uncontested Divorce Review"],
+      "General Case Assessment": ["Attorney Consultation (Advice Only - No Doc Review)", "Attorney Consultation (Up to 30 Pages Doc Review)", "Attorney Consultation (Up to 50 Pages Doc Review)", "Attorney Consultation (Up to 100 Pages Doc Review)", "Attorney Consultation (Up to 150 Pages Doc Review)"],
+      "Immigration": ["Citizenship Advice", "Citizenship Application Filing", "EB1 Visa Petition Filing", "EB2 NIW Visa Petition Filing", "EB3 Visa Petition Filing", "Family Green Card Review and Advice", "Family Immigration Review and Advice", "H1B Visa Petition Filing", "K1 Visa Petition Filing", "Marriage Green Card Review and Advice", "NOID Advice", "O1 Visa Petition Filing", "RFE Advice", "TN Visa Petition Filing"],
+      "Intellectual Property": ["Basic Trademark Office Action Replies", "Cease and Desist Letter Drafting", "Complex Office Action Response - Multiple Issues", "Complex Office Action Response - Single Issue", "Copyright Filing Serial Works", "Copyright Filing Single Work", "Design Patent Application", "Intellectual Property Advice", "Nonprovisional Biological Electrical and Software Patent Filing", "Nonprovisional Computer and Business Method Patent Filing", "Nonprovisional Mechanical Patent Filing", "Patent Consultation Review and Advice", "Patent Search", "Provisional Patent Application", "Response to Opposition", "Trademark Application Filing", "Trademark Application Full Service", "Trademark Infringement Review and Advice", "Trademark Search Assessment"],
+      "Landlord and Tenant": ["Commercial Lease Review and Advice", "Eviction Consultation", "Eviction Notice Drafting (with cause)", "Eviction Notice Drafting (without cause)", "Eviction Package", "Eviction Suit Review", "Lease Violation Advice", "Residential Lease Agreement Drafting", "Residential Lease Review and Advice", "Tenant Eviction Advice"],
+      "Lawsuits and Disputes": ["Civil Litigation Assistance", "Demand Letter Drafting", "Demand Letter Drafting (stand alone)", "Home Owners Association Dispute Assistance", "Neighbor Dispute Assistance", "Property Dispute Assistance", "Small Claims Assistance"]
+    };
+
+    function toggleAttorneyFields() {
+      const role = document.getElementById('role').value;
+      const attorneyFields = document.getElementById('attorneyFields');
+      const dateAdmittedLabel = document.getElementById('dateAdmittedLabel');
+
+      if (role === 'Attorney') {
+        attorneyFields.style.display = 'block';
+        dateAdmittedLabel.style.display = 'block';
+        addJurisdictionField();
+      } else {
+        attorneyFields.style.display = 'none';
+        dateAdmittedLabel.style.display = 'none';
+        document.getElementById('jurisdictionContainer').innerHTML = '';
+      }
+    }
+
+    function addJurisdictionField() {
+      const container = document.getElementById('jurisdictionContainer');
+      const index = container.children.length + 1;
+
+      const div = document.createElement('div');
+      div.className = 'jurisdiction-block';
+      div.setAttribute('data-index', index); // 🔥 Add this
+      div.innerHTML = `
+        <div class="jurisdiction-divider"></div>
+        <div class="jurisdiction-top">
+          <label>Jurisdiction:
+            <select required name="jurisdiction${index}">
+              <option disabled selected value="">Select your jurisdiction</option>
+              <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>District of Columbia</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>American Samoa</option><option>Guam</option><option>Northern Mariana Islands</option><option>Puerto Rico</option><option>U.S. Virgin Islands</option>
+            </select>
+          </label>
+          <label>Bar Number:
+            <input type="text" required name="barNumber${index}">
+          </label>
+          ${index === 1 ? '<label>Patent License Number:<input type="text" name="patentLicense"></label>' : ''}
+        </div>
+        <p><strong>Select services for this jurisdiction:</strong> (Federal services should only be selected for the first jurisdiction)</p>
+        ${Object.keys(subcategoriesMap).map(parent => `
+          <label><input type="checkbox" name="parent${index}" value="${parent}" onchange="toggleSubcategories(this, ${index})"> ${parent}</label>
+          <div class="subcategory" id="sub-${parent.replace(/\s+/g, '')}-${index}" style="display:none">
+            ${subcategoriesMap[parent].map(child => `<label><input type="checkbox" name="child${index}" value="${child}"> ${child}</label>`).join('')}
+          </div>`).join('')}
+      `;
+      container.appendChild(div);
+    }
+
+    function toggleSubcategories(parentCheckbox, index) {
+      const subId = `sub-${parentCheckbox.value.replace(/\s+/g, '')}-${index}`;
+      const subDiv = document.getElementById(subId);
+      subDiv.style.display = parentCheckbox.checked ? 'block' : 'none';
+      const checkboxes = subDiv.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = parentCheckbox.checked);
+    }
+  </script>
+</head>
+<body>
+  <h1>Firm User Onboarding Form</h1>
+  <form id="attorneyForm">
+    <fieldset>
+      <legend>User Information</legend>
+      <label>First Name: <input type="text" name="firstName" required></label>
+      <label>Last Name: <input type="text" name="lastName" required></label>
+      <label>Email: <input type="email" name="email" required></label>
+      <label>Phone: <input type="tel" name="phone" required></label>
+      <label>Role:
+        <select name="role" id="role" required onchange="toggleAttorneyFields()">
+          <option disabled selected>Select role</option>
+          <option value="Attorney">Attorney</option>
+          <option value="Admin">Admin</option>
+          <option value="Assistant">Assistant</option>
+        </select>
+      </label>
+      <label id="dateAdmittedLabel" style="display: none;">
+        Date First Admitted to Bar:
+        <input type="date" name="dateAdmitted" id="dateAdmitted">
+      </label>
+      <label>Firm Name: <input type="text" name="firmName" required></label>
+    </fieldset>
+
+    <div id="attorneyFields" style="display:none;">
+      <fieldset>
+        <legend>Jurisdiction and Services</legend>
+        <div id="jurisdictionContainer"></div>
+        <button type="button" onclick="addJurisdictionField()">Add Another Jurisdiction</button>
+      </fieldset>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+<script>
+  document.getElementById("attorneyForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    const userFields = {
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      role: formData.get("role"),
+      firmName: formData.get("firmName"),
+      dateAdmitted: formData.get("dateAdmitted") || null
+    };
+
+    const jurisdictionBlocks = document.querySelectorAll(".jurisdiction-block");
+    const jurisdictionPayloads = [];
+
+    for (const block of jurisdictionBlocks) {
+      const index = block.getAttribute("data-index");
+
+      const jurisdiction = block.querySelector(`select[name="jurisdiction${index}"]`)?.value || "";
+      const barNumber = block.querySelector(`input[name="barNumber${index}"]`)?.value || "";
+      const patentLicense = block.querySelector(`input[name="patentLicense"]`)?.value || "";
+      const parentCategories = Array.from(block.querySelectorAll(`input[name="parent${index}"]:checked`)).map(cb => cb.value);
+      const services = Array.from(block.querySelectorAll(`input[name="child${index}"]:checked`)).map(cb => cb.value);
+
+      if (!jurisdiction) continue;
+
+      jurisdictionPayloads.push({
+        jurisdiction,
+        barNumber,
+        patentLicense,
+        parentCategories,
+        services
+      });
+    }
+
+    try {
+      const response = await fetch("/.netlify/functions/submitForm", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        userFields,
+        jurisdictionPayloads
+      })
+    });
+
+
+      if (!response.ok) throw new Error("Webhook failed");
+
+      alert("Form submitted successfully!");
+      e.target.reset();
+      document.getElementById("jurisdictionContainer").innerHTML = "";
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("There was an error submitting the form. Please try again.");
+    }
+  });
+</script>
