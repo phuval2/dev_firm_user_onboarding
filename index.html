@@ -2,164 +2,143 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Firm User Onboarding Form</title>
+  <title>Lawhivei Co-counsel User Onboarding Form</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
+    :root{
+      --bg: #f7f8fa;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #0f62fe;
+      --accent-600: #0b53d6;
+      --success: #10b981;
+      --danger: #ef4444;
+      --radius-lg: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 6px 20px rgba(16,24,40,0.08);
+      --max-width: 920px;
+      --gap: 16px;
+    }
+
+    /* Reset / base */
+    *{box-sizing: border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
       background-color: #FDE6D0;
-      color: #1A1A1A;
-      padding: 40px;
-    }
-    h1 {
-      font-size: 2em;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-    form {
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      max-width: 800px;
-      width: 100%;
-      box-sizing: border-box;
-      margin: auto;
-    }
-    fieldset {
-      margin-bottom: 30px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 20px;
-    }
-    legend {
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-size: 0.95em;
-    }
-    input, select {
-      width: 100%;
-      padding: 4px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-family: inherit;
-      margin-top: 5px;
-    }
-    button {
-      background-color: #000;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1em;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    button:hover {
-      background-color: #333;
-    }
-    .category-group > label,
-    .subcategory-block > label,
-    .subcategory label {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      align-items: start;
-      gap: 10px;
-      font-size: 0.95em;
-      font-weight: 400;
-      margin: 0;
-      width: 100%;
-      white-space: nowrap;
+      color: #0f1724;
+      padding: 36px 20px;
+      -webkit-font-smoothing:antialiased;
     }
 
-    .category-group > label input[type="checkbox"],
-    .subcategory-block > label input[type="checkbox"],
-    .subcategory label input[type="checkbox"] {
-      align-self: flex-start;
-      margin-top: 2px;
+    h1{
+      text-align:center;
+      font-size:1.6rem;
+      margin:0 0 20px 0;
+      font-weight:700;
+      color: #0b1220;
     }
 
-    .child-category-label {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      align-items: start;
-      gap: 10px;
-      font-size: 0.95em;
-      font-weight: 400;
-      margin: 0;
-      width: 100%;
-      white-space: nowrap;
+    /* Layout */
+    .form-shell{
+      max-width:var(--max-width);
+      margin:0 auto;
     }
 
-    .child-category-label input[type="checkbox"] {
-      align-self: flex-start;
-      margin-top: 2px;
+    form{
+      background:var(--card);
+      border-radius:var(--radius-lg);
+      padding:24px;
+      box-shadow:var(--shadow);
+      border: 1px solid rgba(15,23,36,0.05);
+      display:block;
     }
 
-    .jurisdiction-divider {
-      border-top: 1px solid #ccc;
-      margin: 10px 0;
+    fieldset{
+      border:0;
+      padding:0;
+      margin:0 0 18px 0;
     }
-    .jurisdiction-block {
-      position: relative; 
+
+    legend{
+      font-weight:700;
+      font-size:0.98rem;
+      margin-bottom:10px;
+      color:#0b1220;
+    }
+
+    /* Form grid for user info */
+    .user-grid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:var(--gap);
+      align-items:start;
+    }
+
+    label{display:block; font-size:0.95rem; color: #0b1220}
+
+    .field{width:100%}
+
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:var(--radius-sm);
+      border:1px solid rgba(15,23,36,0.08);
       background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
+      transition: box-shadow .12s ease, border-color .12s ease;
+      font-size:0.95rem;
     }
 
-    .remove-jurisdiction-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: none;
-      color: #cc0000;
-      border: none;
-      font-size: .9em;
-      font-weight: bold;
-      padding: 0;
-      line-height: 1;
-      cursor: pointer;
+    input:focus, select:focus{outline:none; box-shadow:0 4px 14px rgba(15,99,255,0.08); border-color:var(--accent-600)}
+
+    /* Buttons */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      background:var(--accent);
+      color:#fff; border:0; padding:10px 16px; border-radius:10px;
+      font-weight:700; cursor:pointer; transition:transform .06s ease, box-shadow .12s ease;
     }
-    .remove-jurisdiction-btn:hover {
-      color: #960000;
-      text-decoration: underline;
+    .btn:hover{transform:translateY(-1px); background:var(--accent-600)}
+    .btn-secondary{background:transparent; color:var(--accent-600); border:1px solid rgba(11,83,214,0.08)}
+
+    /* Utility & small components */
+    .hidden{display:none}
+    .checkbox-label{display:flex; align-items:center; gap:10px;}
+    .checkbox-label input{width:auto}
+
+    .category-group{margin-top:14px}
+    .subcategory-block{margin-top:10px}
+    .children-block{margin-left:18px; display:none}
+
+    .child-category-label{display:flex; gap:10px; align-items:center}
+    .child-category-label input{width:auto}
+
+    .jurisdiction-divider{height:1px; background:linear-gradient(90deg, rgba(15,23,36,0.04), rgba(15,23,36,0.02)); margin:12px 0}
+
+    .jurisdiction-block{background:linear-gradient(180deg,#ffffff,#fbfdff); border:1px solid rgba(15,23,36,0.04); padding:14px; border-radius:10px; margin-bottom:14px; box-shadow: 0 4px 16px rgba(2,6,23,0.04)}
+
+    .jurisdiction-top{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; align-items:end}
+
+    .remove-jurisdiction-btn{background:none; border:0; color:var(--danger); font-weight:700; cursor:pointer}
+
+    .litigation-row{margin-top:10px}
+    .litigation-label{display:flex; align-items:center; gap:10px}
+    .litigation-label input{margin-left:auto}
+
+    /* Checkbox accent color modern browsers */
+    input[type="checkbox"]{width:18px; height:18px; accent-color:var(--accent)}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .user-grid{grid-template-columns:1fr}
+      .jurisdiction-top{grid-template-columns:1fr}
+      form{padding:18px}
     }
-    .jurisdiction-block > label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      margin-top: 15px;
-      width: fit-content;        
-      white-space: nowrap;       
-    }
-      .jurisdiction-top {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      align-items: end;
-    }
-    .jurisdiction-block a {
-      color: #0077cc;
-      text-decoration: underline;
-      font-size: 0.9em;
-    }
-    .jurisdiction-block a:hover {
-      color: #005fa3;
-    }
-    select option:disabled {
-      color: #999;
-    }
-    p strong {
-      display: block;
-      margin-top: 10px;
+
+    @media (max-width:420px){
+      body{padding:20px}
+      .btn{width:100%}
     }
   </style>
   <script>
@@ -177,13 +156,18 @@
 
     async function toggleAttorneyFields() {
       const isAttorney = document.getElementById('isAttorney').checked;
+      const isAttorneyNo = document.getElementById('isAttorneyNo');
+      // Ensure mutual exclusivity
+      if (isAttorney && isAttorneyNo) {
+        isAttorneyNo.checked = false;
+      }
       const attorneyFields = document.getElementById('attorneyFields');
       const dateAdmittedLabel = document.getElementById('dateAdmittedLabel');
       const jurisdictionContainer = document.getElementById('jurisdictionContainer');
 
       if (isAttorney) {
-        attorneyFields.style.display = 'block';
-        dateAdmittedLabel.style.display = 'block';
+        attorneyFields.classList.remove('hidden');
+        dateAdmittedLabel.classList.remove('hidden');
         jurisdictionContainer.innerHTML = '';
 
         if (!categoriesFetched) {
@@ -193,8 +177,8 @@
 
         addJurisdictionField();
       } else {
-        attorneyFields.style.display = 'none';
-        dateAdmittedLabel.style.display = 'none';
+        attorneyFields.classList.add('hidden');
+        dateAdmittedLabel.classList.add('hidden');
         jurisdictionContainer.innerHTML = '';
       }
     }
@@ -246,7 +230,7 @@
         ${Object.entries(subcategoriesMap).map(([parentCategory, subcategories]) => {
           const parentId = `parent-${parentCategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
           return `
-            <div class="category-group" style="margin-top: 20px;">
+            <div class="category-group">
               <label>
                 <input 
                   type="checkbox" 
@@ -256,11 +240,11 @@
                   onchange="toggleParent('${parentId}', ${index})"
                 > <strong>${parentCategory}</strong>
               </label>
-              <div id="${parentId}-children" style="margin-left: 20px; display:none;">
+              <div id="${parentId}-children" class="children-block">
                 ${Object.entries(subcategories).map(([subcategory, products]) => {
                   const subId = `subcategory-${subcategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
                   return `
-                    <div class="subcategory-block" style="margin-top: 10px;">
+                    <div class="subcategory-block">
                       <label>
                         <input 
                           type="checkbox" 
@@ -270,7 +254,7 @@
                           onchange="toggleSubcategory('${subId}', ${index})"
                         > ${subcategory}
                       </label>
-                      <div id="${subId}-children" style="margin-left: 20px; display:none;">
+                      <div id="${subId}-children" class="children-block">
                         ${products.map(product => `
                           <label class="child-category-label">
                             <input 
@@ -296,11 +280,25 @@
 
 
         <!-- ✅ Only one litigation checkbox, outside the map -->
-        <div style="margin-top: 10px;">
-          <label style="white-space: nowrap; font-weight: 400; display: inline-block;">
+        <div class="litigation-row">
+          <label class="litigation-label">
             <span>Check if you handle litigation in this jurisdiction</span>
-            <input type="checkbox" name="litigation${index}" style="margin-left: -110px; vertical-align: middle; transform: translateY(-2px);">
+            <input 
+              type="checkbox" 
+              name="litigation${index}" 
+              class="litigation-checkbox"
+              onchange="toggleLitigationCounties(this, ${index})"
+            >
           </label>
+        </div>
+        
+        <div id="litigationCounties${index}" class="field hidden" style="margin-top: 10px;">
+          <label>What counties/parishes do you represent/litigate in for this jurisdiction?</label>
+          <input 
+            type="text" 
+            name="litigationCounties${index}" 
+            placeholder="e.g., Harris County, Dallas County"
+          >
         </div>
 
         ${index > 1 ? `
@@ -323,7 +321,10 @@
       const isChecked = parentCheckbox.checked;
       const children = document.getElementById(`${parentId}-children`);
 
-      children.style.display = isChecked ? 'block' : 'none';
+      if (children) {
+        if (isChecked) children.classList.remove('hidden');
+        else children.classList.add('hidden');
+      }
 
       // Uncheck and collapse all subcategories and children if unchecked
       if (!isChecked) {
@@ -334,7 +335,7 @@
           const subId = subCb.id;
           const serviceBlock = document.getElementById(`${subId}-children`);
           if (serviceBlock) {
-            serviceBlock.style.display = 'none';
+            serviceBlock.classList.add('hidden');
             serviceBlock.querySelectorAll('input[type="checkbox"]').forEach(childCb => {
               childCb.checked = false;
             });
@@ -343,48 +344,106 @@
       }
     }
 
+    function toggleLitigationCounties(checkbox, index) {
+      const countiesField = document.getElementById(`litigationCounties${index}`);
+      if (countiesField) {
+        if (checkbox.checked) {
+          countiesField.classList.remove('hidden');
+          countiesField.querySelector('input').required = true;
+        } else {
+          countiesField.classList.add('hidden');
+          countiesField.querySelector('input').required = false;
+        }
+      }
+    }
+
     function toggleSubcategory(subId, index) {
       const isChecked = document.getElementById(subId).checked;
       const serviceBlock = document.getElementById(`${subId}-children`);
-      serviceBlock.style.display = isChecked ? 'block' : 'none';
+      if (serviceBlock) {
+        if (isChecked) serviceBlock.classList.remove('hidden');
+        else serviceBlock.classList.add('hidden');
 
-      serviceBlock.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        cb.checked = isChecked;
-      });
+        serviceBlock.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.checked = isChecked;
+        });
+      }
     }
 
   </script>
 </head>
 <body>
-  <h1>Firm User Onboarding Form</h1>
+  <div class="form-shell">
+  <h1>Lawhivei Co-counsel User Onboarding Form</h1>
   <form id="attorneyForm">
     <fieldset>
       <legend>User Information</legend>
-      <label>First Name: <input type="text" name="firstName" required></label>
-      <label>Last Name: <input type="text" name="lastName" required></label>
-      <label>Email: <input type="email" name="email" required></label>
-      <label>Office Phone: <input type="tel" name="office phone"></label>
-      <label>Cell Phone: <input type="tel" name="cell phone"></label>
-      <label style="display: flex; align-items: center; white-space: nowrap;">
-        <span style="margin-right: 8px;">Are you an attorney?</span>
-        <input 
-          type="checkbox" 
-          name="isAttorney" 
-          id="isAttorney" 
-          onchange="toggleAttorneyFields()"
-          style="transform: translateX(-260px);"
-        >
-      </label>
+      <div class="user-grid">
+        <div>
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <span>Are you an attorney?</span>
+            <label class="checkbox-label">
+              <span>Yes</span>
+              <input
+                type="checkbox"
+                name="isAttorney"
+                id="isAttorney"
+                onchange="toggleAttorneyFields()"
+              >
+            </label>
+            <label class="checkbox-label">
+              <span>No</span>
+              <input
+                type="checkbox"
+                name="isAttorneyNo"
+                id="isAttorneyNo"
+                onchange="if(this.checked) { document.getElementById('isAttorney').checked = false; toggleAttorneyFields(); }"
+              >
+            </label>
+          </div>
+        </div>
+        <div></div>
 
-      <label id="dateAdmittedLabel" style="display: none;">
-        Date First Admitted to Bar:
-        <input type="date" name="dateAdmitted" id="dateAdmitted">
-      </label>
-      <label>Firm Name: <input type="text" name="firmName" required></label>
-      <label>Job Title: <input type="text" name="jobTitle" required></label>
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" name="firstName" required>
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" name="lastName" required>
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="field">
+          <label>Office Phone</label>
+          <input type="tel" name="office phone">
+        </div>
+
+        <div class="field">
+          <label>Cell Phone</label>
+          <input type="tel" name="cell phone">
+        </div>
+
+        <div class="field hidden" id="dateAdmittedLabel">
+          <label>Date First Admitted to Bar</label>
+          <input type="date" name="dateAdmitted" id="dateAdmitted">
+        </div>
+
+        <div class="field">
+          <label>Firm Name</label>
+          <input type="text" name="firmName" required>
+        </div>
+        <div class="field">
+          <label>Job Title</label>
+          <input type="text" name="jobTitle" required>
+        </div>
+      </div>
     </fieldset>
 
-    <div id="attorneyFields" style="display:none;">
+    <div id="attorneyFields" class="hidden">
       <fieldset>
         <legend>Jurisdiction and Services</legend>
         <div id="jurisdictionContainer"></div>
@@ -452,7 +511,9 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
         subcategory: cb.dataset.subcategory
       }));
       const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
-
+      const litigationCounties = doesLitigation === "True" 
+        ? block.querySelector(`input[name="litigationCounties${index}"]`)?.value || ""
+        : "";
 
       if (!jurisdiction) continue;
 
@@ -461,7 +522,8 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
         barNumber,
         patentLicense,
         services,
-        doesLitigation
+        doesLitigation,
+        litigationCounties
       });
     }
 
@@ -484,9 +546,9 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
 
       alert("Form submitted successfully!");
       e.target.reset();
-      document.getElementById("jurisdictionContainer").innerHTML = "";
-      document.getElementById("attorneyFields").style.display = "none";
-      document.getElementById("dateAdmittedLabel").style.display = "none";
+  document.getElementById("jurisdictionContainer").innerHTML = "";
+  document.getElementById("attorneyFields").classList.add('hidden');
+  document.getElementById("dateAdmittedLabel").classList.add('hidden');
       document.getElementById("isAttorney").checked = false;
       isSubmitting = false;
       submitBtn.disabled = false;
