@@ -613,6 +613,28 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
       });
     }
 
+    // Validation: for each jurisdiction, any selected parent category must have at least one preference selected
+    const jurisdictionBlocksForValidation = Array.from(document.querySelectorAll('.jurisdiction-block'));
+    for (const block of jurisdictionBlocksForValidation) {
+      const idx = block.getAttribute('data-index');
+      const checkedParents = Array.from(block.querySelectorAll(`input[name="parentCategory-${idx}"]:checked`));
+      for (const parentCb of checkedParents) {
+        const parentId = parentCb.id;
+        const parentName = parentCb.value || 'Selected category';
+        const court = block.querySelector(`input[name="courtAppearances-${parentId}"]`);
+        const full = block.querySelector(`input[name="fullRepresentation-${parentId}"]`);
+        const nonePref = block.querySelector(`input[name="none-${parentId}"]`);
+        if (!(court?.checked || full?.checked || nonePref?.checked)) {
+          // re-enable UI and stop submission
+          alert(`Please select at least one option (Appearance, Full Representation, or None) for "${parentName}" in jurisdiction ${idx}.`);
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Submit';
+          isSubmitting = false;
+          return;
+        }
+      }
+    }
+
     try {
       const payload = { userFields };
 
