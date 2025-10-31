@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lawhivei Co-counsel User Onboarding Form</title>
+  <title>Lawhive Co-counsel User Onboarding Form</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -159,10 +159,6 @@
 
     .remove-jurisdiction-btn{background:none; border:0; color:var(--danger); font-weight:700; cursor:pointer}
 
-    .litigation-row{margin-top:10px}
-    .litigation-label{display:flex; align-items:center; gap:10px}
-    .litigation-label input{margin-left:auto}
-
     /* Checkbox accent color modern browsers */
     input[type="checkbox"]{width:18px; height:18px; accent-color:var(--accent)}
 
@@ -191,19 +187,46 @@
       }
     }
 
-    function toggleCountiesField(elementId, show) {
-      const element = document.getElementById(elementId);
-      if (element) {
-        if (show) {
-          element.classList.remove('hidden');
+    function togglePreferenceOption(checkbox, parentId) {
+      const noneCheckbox = document.querySelector(`input[name="none-${parentId}"]`);
+      if (checkbox.checked && noneCheckbox) {
+        noneCheckbox.checked = false;
+      }
+      
+      // Show/hide counties field if it exists
+      const countiesFieldId = checkbox.name.includes('court') ? 
+        `${parentId}-court-counties` : 
+        `${parentId}-full-counties`;
+      
+      const countiesField = document.getElementById(countiesFieldId);
+      if (countiesField) {
+        if (checkbox.checked) {
+          countiesField.classList.remove('hidden');
         } else {
-          element.classList.add('hidden');
-          // Clear the textarea when hidden
-          const textarea = element.querySelector('textarea');
+          countiesField.classList.add('hidden');
+          const textarea = countiesField.querySelector('textarea');
           if (textarea) {
             textarea.value = '';
           }
         }
+      }
+    }
+
+    function toggleNoneOption(checkbox, parentId) {
+      if (checkbox.checked) {
+        // Uncheck and hide other options
+        const otherCheckboxes = [
+          document.querySelector(`input[name="courtAppearances-${parentId}"]`),
+          document.querySelector(`input[name="fullRepresentation-${parentId}"]`)
+        ];
+        
+        otherCheckboxes.forEach(cb => {
+          if (cb && cb.checked) {
+            cb.checked = false;
+            const event = new Event('change');
+            cb.dispatchEvent(event);
+          }
+        });
       }
     }
 
@@ -294,37 +317,6 @@
                 > <strong>${parentCategory}</strong>
               </label>
               <div id="${parentId}-children" class="children-block hidden">
-                <div class="attorney-preferences">
-                  <p><strong>Are you open to:</strong></p>
-                  <div class="preference-options">
-                    <label>
-                      <input type="checkbox" 
-                             name="courtAppearances-${parentId}" 
-                             onchange="toggleCountiesField('${parentId}-court-counties', this.checked)"> 
-                      Making court appearances
-                    </label>
-                    <div id="${parentId}-court-counties" class="counties-field hidden">
-                      <textarea 
-                        name="courtCounties-${parentId}" 
-                        placeholder="Please list the counties/parishes where you can make court appearances"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                    <label>
-                      <input type="checkbox" 
-                             name="fullRepresentation-${parentId}" 
-                             onchange="toggleCountiesField('${parentId}-full-counties', this.checked)"> 
-                      Taking on full representation
-                    </label>
-                    <div id="${parentId}-full-counties" class="counties-field hidden">
-                      <textarea 
-                        name="representationCounties-${parentId}" 
-                        placeholder="Please list the counties/parishes where you can take on full representation"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
                 ${Object.entries(subcategories).map(([subcategory, products]) => {
                   const subId = `subcategory-${subcategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
                   return `
@@ -438,7 +430,7 @@
 </head>
 <body>
   <div class="form-shell">
-  <h1>Lawhivei Co-counsel User Onboarding Form</h1>
+  <h1>Lawhive Co-counsel User Onboarding Form</h1>
   <form id="attorneyForm">
     <fieldset>
       <legend>User Information</legend>
@@ -574,17 +566,19 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
         const parentId = `parent-${category.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
         const courtAppearancesCheckbox = block.querySelector(`input[name="courtAppearances-${parentId}"]`);
         const fullRepCheckbox = block.querySelector(`input[name="fullRepresentation-${parentId}"]`);
+        const noneCheckbox = block.querySelector(`input[name="none-${parentId}"]`);
         
         return {
           product: cb.value,
           category: category,
           subcategory: cb.dataset.subcategory,
-          courtAppearances: courtAppearancesCheckbox?.checked || false,
-          courtCounties: courtAppearancesCheckbox?.checked ? 
+          appearance: courtAppearancesCheckbox?.checked ? "Yes" : "No",
+          countiesAppearance: courtAppearancesCheckbox?.checked ? 
             block.querySelector(`textarea[name="courtCounties-${parentId}"]`)?.value || '' : '',
-          fullRepresentation: fullRepCheckbox?.checked || false,
-          representationCounties: fullRepCheckbox?.checked ?
-            block.querySelector(`textarea[name="representationCounties-${parentId}"]`)?.value || '' : ''
+          fullRepresentation: fullRepCheckbox?.checked ? "Yes" : "No",
+          countiesRepresentation: fullRepCheckbox?.checked ?
+            block.querySelector(`textarea[name="representationCounties-${parentId}"]`)?.value || '' : '',
+          none: noneCheckbox?.checked ? "Yes" : "No"
         };
       });
       const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
