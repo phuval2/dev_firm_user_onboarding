@@ -283,7 +283,7 @@
         <div class="litigation-row">
           <label class="litigation-label">
             <span>Check if you handle litigation in this jurisdiction</span>
-            <input type="checkbox" name="litigation${index}" class="litigation-checkbox">
+            <input type="checkbox" name="litigation${index}" class="litigation-checkbox" onchange="toggleLitigationCounties(${index}, this.checked)">
           </label>
         </div>
 
@@ -341,6 +341,13 @@
           cb.checked = isChecked;
         });
       }
+    }
+
+    function toggleLitigationCounties(index, checked) {
+      const wrapper = document.getElementById(`litigationCountiesWrapper-${index}`);
+      if (!wrapper) return;
+      if (checked) wrapper.classList.remove('hidden');
+      else wrapper.classList.add('hidden');
     }
 
   </script>
@@ -485,6 +492,8 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
       }));
       const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
 
+  const litigationCounties = block.querySelector(`textarea[name="litigationCounties${index}"]`)?.value || "";
+
 
       if (!jurisdiction) continue;
 
@@ -493,7 +502,8 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
         barNumber,
         patentLicense,
         services,
-        doesLitigation
+        doesLitigation,
+        litigationCounties
       });
     }
 

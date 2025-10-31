@@ -103,25 +103,28 @@ export async function handler(event) {
           const parentCategory = service.category || "Unknown";
 
 
+          const jurisdictionFields = {
+            Jurisdiction: j.jurisdiction,
+            "Bar Number": j.barNumber,
+            ...(j.patentLicense ? { "Patent License Number": j.patentLicense } : {}),
+            "Parent Categories": parentCategory,
+            "Subcategory": service.subcategory,
+            "Services": service.product,
+            "Linked User": [userId],
+            "User": `${userFields.firstName} ${userFields.lastName}`,
+            "Litigation": j.doesLitigation,
+            ...(j.litigationCounties ? { "Litigation Counties": j.litigationCounties } : {})
+          };
+
+          console.log('Posting jurisdiction to Airtable with fields:', jurisdictionFields);
+
           await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/Jurisdictions`, {
             method: "POST",
             headers: {
               Authorization: `Bearer ${AIRTABLE_TOKEN}`,
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-              fields: {
-                Jurisdiction: j.jurisdiction,
-                "Bar Number": j.barNumber,
-                ...(j.patentLicense ? { "Patent License Number": j.patentLicense } : {}),
-                "Parent Categories": parentCategory,
-                "Subcategory": service.subcategory,
-                "Services": service.product,
-                "Linked User": [userId],
-                "User": `${userFields.firstName} ${userFields.lastName}`,
-                "Litigation": j.doesLitigation,
-              }
-            })
+            body: JSON.stringify({ fields: jurisdictionFields })
           });
         }
       }
