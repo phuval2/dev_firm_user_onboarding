@@ -109,7 +109,44 @@
 
     .category-group{margin-top:14px}
     .subcategory-block{margin-top:10px}
-  .children-block{margin-left:18px}
+    .children-block{margin-left:18px}
+
+    .attorney-preferences {
+      margin: var(--gap) 0;
+      padding: var(--gap);
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+    }
+
+    .attorney-preferences p {
+      margin: 0 0 8px 0;
+    }
+
+    .preference-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .counties-field {
+      margin-top: 8px;
+      margin-left: 24px;
+    }
+
+    .counties-field textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #d1d5db;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .counties-field textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.1);
+    }
 
     .child-category-label{display:flex; gap:10px; align-items:center}
     .child-category-label input{width:auto}
@@ -151,6 +188,22 @@
         subcategoriesMap = map;
       } catch (err) {
         console.error("Failed to load categories from server", err);
+      }
+    }
+
+    function toggleCountiesField(elementId, show) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        if (show) {
+          element.classList.remove('hidden');
+        } else {
+          element.classList.add('hidden');
+          // Clear the textarea when hidden
+          const textarea = element.querySelector('textarea');
+          if (textarea) {
+            textarea.value = '';
+          }
+        }
       }
     }
 
@@ -241,6 +294,37 @@
                 > <strong>${parentCategory}</strong>
               </label>
               <div id="${parentId}-children" class="children-block hidden">
+                <div class="attorney-preferences">
+                  <p><strong>Are you open to:</strong></p>
+                  <div class="preference-options">
+                    <label>
+                      <input type="checkbox" 
+                             name="courtAppearances-${parentId}" 
+                             onchange="toggleCountiesField('${parentId}-court-counties', this.checked)"> 
+                      Making court appearances
+                    </label>
+                    <div id="${parentId}-court-counties" class="counties-field hidden">
+                      <textarea 
+                        name="courtCounties-${parentId}" 
+                        placeholder="Please list the counties/parishes where you can make court appearances"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                    <label>
+                      <input type="checkbox" 
+                             name="fullRepresentation-${parentId}" 
+                             onchange="toggleCountiesField('${parentId}-full-counties', this.checked)"> 
+                      Taking on full representation
+                    </label>
+                    <div id="${parentId}-full-counties" class="counties-field hidden">
+                      <textarea 
+                        name="representationCounties-${parentId}" 
+                        placeholder="Please list the counties/parishes where you can take on full representation"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
                 ${Object.entries(subcategories).map(([subcategory, products]) => {
                   const subId = `subcategory-${subcategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
                   return `
@@ -485,11 +569,24 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
       const jurisdiction = block.querySelector(`select[name="jurisdiction${index}"]`)?.value || "";
       const barNumber = block.querySelector(`input[name="barNumber${index}"]`)?.value || "";
       const patentLicense = block.querySelector(`input[name="patentLicense"]`)?.value || "";
-      const services = Array.from(block.querySelectorAll(`input[name="child${index}"]:checked`)).map(cb => ({
-        product: cb.value,
-        category: cb.dataset.category,
-        subcategory: cb.dataset.subcategory
-      }));
+      const services = Array.from(block.querySelectorAll(`input[name="child${index}"]:checked`)).map(cb => {
+        const category = cb.dataset.category;
+        const parentId = `parent-${category.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
+        const courtAppearancesCheckbox = block.querySelector(`input[name="courtAppearances-${parentId}"]`);
+        const fullRepCheckbox = block.querySelector(`input[name="fullRepresentation-${parentId}"]`);
+        
+        return {
+          product: cb.value,
+          category: category,
+          subcategory: cb.dataset.subcategory,
+          courtAppearances: courtAppearancesCheckbox?.checked || false,
+          courtCounties: courtAppearancesCheckbox?.checked ? 
+            block.querySelector(`textarea[name="courtCounties-${parentId}"]`)?.value || '' : '',
+          fullRepresentation: fullRepCheckbox?.checked || false,
+          representationCounties: fullRepCheckbox?.checked ?
+            block.querySelector(`textarea[name="representationCounties-${parentId}"]`)?.value || '' : ''
+        };
+      });
       const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
 
   const litigationCounties = block.querySelector(`textarea[name="litigationCounties${index}"]`)?.value || "";

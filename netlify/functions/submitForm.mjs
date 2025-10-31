@@ -113,7 +113,11 @@ export async function handler(event) {
             "Linked User": [userId],
             "User": `${userFields.firstName} ${userFields.lastName}`,
             "Litigation": j.doesLitigation,
-            ...(j.litigationCounties ? { "Litigation Counties": j.litigationCounties } : {})
+            ...(j.litigationCounties ? { "Litigation Counties": j.litigationCounties } : {}),
+            "Will Make Court Appearances": service.courtAppearances ? "Yes" : "No",
+            ...(service.courtCounties ? { "Court Appearance Counties": service.courtCounties } : {}),
+            "Will Take Full Representation": service.fullRepresentation ? "Yes" : "No",
+            ...(service.representationCounties ? { "Full Representation Counties": service.representationCounties } : {})
           };
 
           console.log('Posting jurisdiction to Airtable with fields:', jurisdictionFields);
