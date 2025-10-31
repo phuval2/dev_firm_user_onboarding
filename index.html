@@ -159,6 +159,7 @@
 
     .remove-jurisdiction-btn{background:none; border:0; color:var(--danger); font-weight:700; cursor:pointer}
 
+
     /* Checkbox accent color modern browsers */
     input[type="checkbox"]{width:18px; height:18px; accent-color:var(--accent)}
 
@@ -187,24 +188,15 @@
       }
     }
 
-    function togglePreferenceOption(checkbox, parentId) {
-      const noneCheckbox = document.querySelector(`input[name="none-${parentId}"]`);
-      if (checkbox.checked && noneCheckbox) {
-        noneCheckbox.checked = false;
-      }
-      
-      // Show/hide counties field if it exists
-      const countiesFieldId = checkbox.name.includes('court') ? 
-        `${parentId}-court-counties` : 
-        `${parentId}-full-counties`;
-      
-      const countiesField = document.getElementById(countiesFieldId);
-      if (countiesField) {
-        if (checkbox.checked) {
-          countiesField.classList.remove('hidden');
+    function toggleCountiesField(elementId, show) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        if (show) {
+          element.classList.remove('hidden');
         } else {
-          countiesField.classList.add('hidden');
-          const textarea = countiesField.querySelector('textarea');
+          element.classList.add('hidden');
+          // Clear the textarea when hidden
+          const textarea = element.querySelector('textarea');
           if (textarea) {
             textarea.value = '';
           }
@@ -212,23 +204,37 @@
       }
     }
 
-    function toggleNoneOption(checkbox, parentId) {
-      if (checkbox.checked) {
-        // Uncheck and hide other options
-        const otherCheckboxes = [
-          document.querySelector(`input[name="courtAppearances-${parentId}"]`),
-          document.querySelector(`input[name="fullRepresentation-${parentId}"]`)
-        ];
+      function handleNoneOption(parentId, checked) {
+        if (checked) {
+          // Uncheck and disable other options
+          const courtAppearances = document.querySelector(`input[name="courtAppearances-${parentId}"]`);
+          const fullRepresentation = document.querySelector(`input[name="fullRepresentation-${parentId}"]`);
         
-        otherCheckboxes.forEach(cb => {
-          if (cb && cb.checked) {
-            cb.checked = false;
-            const event = new Event('change');
-            cb.dispatchEvent(event);
+          if (courtAppearances) {
+            courtAppearances.checked = false;
+            courtAppearances.disabled = true;
+            toggleCountiesField(`${parentId}-court-counties`, false);
           }
-        });
+        
+          if (fullRepresentation) {
+            fullRepresentation.checked = false;
+            fullRepresentation.disabled = true;
+            toggleCountiesField(`${parentId}-full-counties`, false);
+          }
+        } else {
+          // Re-enable other options
+          const courtAppearances = document.querySelector(`input[name="courtAppearances-${parentId}"]`);
+          const fullRepresentation = document.querySelector(`input[name="fullRepresentation-${parentId}"]`);
+        
+          if (courtAppearances) {
+            courtAppearances.disabled = false;
+          }
+        
+          if (fullRepresentation) {
+            fullRepresentation.disabled = false;
+          }
+        }
       }
-    }
 
     async function toggleAttorneyFields() {
       const isAttorney = document.getElementById('isAttorney').checked;
@@ -317,6 +323,37 @@
                 > <strong>${parentCategory}</strong>
               </label>
               <div id="${parentId}-children" class="children-block hidden">
+                <div class="attorney-preferences">
+                  <p><strong>Are you open to:</strong></p>
+                  <div class="preference-options">
+                    <label>
+                      <input type="checkbox" 
+                             name="courtAppearances-${parentId}" 
+                             onchange="toggleCountiesField('${parentId}-court-counties', this.checked)"> 
+                      Making court appearances
+                    </label>
+                    <div id="${parentId}-court-counties" class="counties-field hidden">
+                      <textarea 
+                        name="courtCounties-${parentId}" 
+                        placeholder="Counties/parishes where you can appear (comma separated, e.g. Travis County, Harris County, Dallas County)"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                    <label>
+                      <input type="checkbox" 
+                             name="fullRepresentation-${parentId}" 
+                             onchange="toggleCountiesField('${parentId}-full-counties', this.checked)"> 
+                      Taking on full representation
+                    </label>
+                    <div id="${parentId}-full-counties" class="counties-field hidden">
+                      <textarea 
+                        name="representationCounties-${parentId}" 
+                        placeholder="Counties/parishes where you can represent (comma separated, e.g. Travis County, Harris County, Dallas County)"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
                 ${Object.entries(subcategories).map(([subcategory, products]) => {
                   const subId = `subcategory-${subcategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
                   return `
@@ -371,13 +408,6 @@
               onclick="removeJurisdictionField(this)">
               Remove This Jurisdiction
             </button>
-          </div>
-        ` : ''}
-        `;
-
-      container.appendChild(div);
-    }
-
     function toggleParent(parentId, index) {
       const parentCheckbox = document.getElementById(parentId);
       const isChecked = parentCheckbox.checked;
@@ -566,19 +596,17 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
         const parentId = `parent-${category.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
         const courtAppearancesCheckbox = block.querySelector(`input[name="courtAppearances-${parentId}"]`);
         const fullRepCheckbox = block.querySelector(`input[name="fullRepresentation-${parentId}"]`);
-        const noneCheckbox = block.querySelector(`input[name="none-${parentId}"]`);
         
         return {
           product: cb.value,
           category: category,
           subcategory: cb.dataset.subcategory,
-          appearance: courtAppearancesCheckbox?.checked ? "Yes" : "No",
-          countiesAppearance: courtAppearancesCheckbox?.checked ? 
+          courtAppearances: courtAppearancesCheckbox?.checked || false,
+          courtCounties: courtAppearancesCheckbox?.checked ? 
             block.querySelector(`textarea[name="courtCounties-${parentId}"]`)?.value || '' : '',
-          fullRepresentation: fullRepCheckbox?.checked ? "Yes" : "No",
-          countiesRepresentation: fullRepCheckbox?.checked ?
-            block.querySelector(`textarea[name="representationCounties-${parentId}"]`)?.value || '' : '',
-          none: noneCheckbox?.checked ? "Yes" : "No"
+          fullRepresentation: fullRepCheckbox?.checked || false,
+          representationCounties: fullRepCheckbox?.checked ?
+            block.querySelector(`textarea[name="representationCounties-${parentId}"]`)?.value || '' : ''
         };
       });
       const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
