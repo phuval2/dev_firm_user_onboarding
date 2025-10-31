@@ -109,7 +109,7 @@
 
     .category-group{margin-top:14px}
     .subcategory-block{margin-top:10px}
-    .children-block{margin-left:18px; display:none}
+  .children-block{margin-left:18px}
 
     .child-category-label{display:flex; gap:10px; align-items:center}
     .child-category-label input{width:auto}
@@ -240,7 +240,7 @@
                   onchange="toggleParent('${parentId}', ${index})"
                 > <strong>${parentCategory}</strong>
               </label>
-              <div id="${parentId}-children" class="children-block">
+              <div id="${parentId}-children" class="children-block hidden">
                 ${Object.entries(subcategories).map(([subcategory, products]) => {
                   const subId = `subcategory-${subcategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
                   return `
@@ -254,7 +254,7 @@
                           onchange="toggleSubcategory('${subId}', ${index})"
                         > ${subcategory}
                       </label>
-                      <div id="${subId}-children" class="children-block">
+                      <div id="${subId}-children" class="children-block hidden">
                         ${products.map(product => `
                           <label class="child-category-label">
                             <input 
