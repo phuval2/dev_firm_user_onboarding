@@ -298,37 +298,6 @@
                 > <strong>${parentCategory}</strong>
               </label>
               <div id="${parentId}-children" class="children-block hidden">
-                <div class="attorney-preferences">
-                  <p><strong>Are you open to:</strong></p>
-                  <div class="preference-options">
-                    <label>
-                      <input type="checkbox" 
-                             name="courtAppearances-${parentId}" 
-                             onchange="toggleCountiesField('${parentId}-court-counties', this.checked)"> 
-                      Making court appearances
-                    </label>
-                    <div id="${parentId}-court-counties" class="counties-field hidden">
-                      <textarea 
-                        name="courtCounties-${parentId}" 
-                        placeholder="Counties/parishes where you can appear (comma separated, e.g. Travis County, Harris County, Dallas County)"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                    <label>
-                      <input type="checkbox" 
-                             name="fullRepresentation-${parentId}" 
-                             onchange="toggleCountiesField('${parentId}-full-counties', this.checked)"> 
-                      Taking on full representation
-                    </label>
-                    <div id="${parentId}-full-counties" class="counties-field hidden">
-                      <textarea 
-                        name="representationCounties-${parentId}" 
-                        placeholder="Counties/parishes where you can represent (comma separated, e.g. Travis County, Harris County, Dallas County)"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
                 ${Object.entries(subcategories).map(([subcategory, products]) => {
                   const subId = `subcategory-${subcategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
                   return `
