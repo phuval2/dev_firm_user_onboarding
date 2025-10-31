@@ -112,11 +112,11 @@ export async function handler(event) {
             "Services": service.product,
             "Linked User": [userId],
             "User": `${userFields.firstName} ${userFields.lastName}`,
-              "Appearance": service.courtAppearances ? "Yes" : "No",
-              "Full Representation": service.fullRepresentation ? "Yes" : "No",
-              "None": service.none ? "Yes" : "No",
-              ...(service.courtCounties ? { "Counties Appearance": service.courtCounties } : {}),
-              ...(service.representationCounties ? { "Counties Representation": service.representationCounties } : {})
+            "Appearance": service.courtAppearances ? "Yes" : "No",
+            "Full Representation": service.fullRepresentation ? "Yes" : "No",
+            "None": service.none ? "Yes" : "No",
+            ...(service.courtCounties ? { "Counties Appearance": service.courtCounties } : {}),
+            ...(service.representationCounties ? { "Counties Representation": service.representationCounties } : {})
           };
 
           console.log('Posting jurisdiction to Airtable with fields:', jurisdictionFields);

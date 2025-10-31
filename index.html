@@ -157,8 +157,7 @@
 
     .jurisdiction-top{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; align-items:end}
 
-    .remove-jurisdiction-btn{background:none; border:0; color:var(--danger); font-weight:700; cursor:pointer}
-
+  .remove-jurisdiction-btn{background:none; border:0; color:var(--danger); font-weight:700; cursor:pointer}
 
     /* Checkbox accent color modern browsers */
     input[type="checkbox"]{width:18px; height:18px; accent-color:var(--accent)}
@@ -193,6 +192,14 @@
       if (element) {
         if (show) {
           element.classList.remove('hidden');
+          // If a counties field is being shown, ensure the 'None' option for this parent is unchecked
+          try {
+            const parentId = elementId.split('-').slice(0, -2).join('-');
+            const noneCb = document.querySelector(`input[name="none-${parentId}"]`);
+            if (noneCb) noneCb.checked = false;
+          } catch (e) {
+            // ignore parsing issues
+          }
         } else {
           element.classList.add('hidden');
           // Clear the textarea when hidden
@@ -203,38 +210,6 @@
         }
       }
     }
-
-      function handleNoneOption(parentId, checked) {
-        if (checked) {
-          // Uncheck and disable other options
-          const courtAppearances = document.querySelector(`input[name="courtAppearances-${parentId}"]`);
-          const fullRepresentation = document.querySelector(`input[name="fullRepresentation-${parentId}"]`);
-        
-          if (courtAppearances) {
-            courtAppearances.checked = false;
-            courtAppearances.disabled = true;
-            toggleCountiesField(`${parentId}-court-counties`, false);
-          }
-        
-          if (fullRepresentation) {
-            fullRepresentation.checked = false;
-            fullRepresentation.disabled = true;
-            toggleCountiesField(`${parentId}-full-counties`, false);
-          }
-        } else {
-          // Re-enable other options
-          const courtAppearances = document.querySelector(`input[name="courtAppearances-${parentId}"]`);
-          const fullRepresentation = document.querySelector(`input[name="fullRepresentation-${parentId}"]`);
-        
-          if (courtAppearances) {
-            courtAppearances.disabled = false;
-          }
-        
-          if (fullRepresentation) {
-            fullRepresentation.disabled = false;
-          }
-        }
-      }
 
     async function toggleAttorneyFields() {
       const isAttorney = document.getElementById('isAttorney').checked;
@@ -383,6 +358,45 @@
                     </div>
                   `;
                 }).join('')}
+
+                  <!-- Attorney preferences moved BELOW subcategories -->
+                  <div class="attorney-preferences">
+                    <p><strong>Are you open to:</strong></p>
+                    <div class="preference-options">
+                      <label>
+                        <input type="checkbox" 
+                               name="courtAppearances-${parentId}" 
+                               onchange="(function(ch){ toggleCountiesField('${parentId}-court-counties', ch); if(ch) toggleNonePreference('${parentId}', false); })(this.checked)"> 
+                        Making court appearances
+                      </label>
+                      <div id="${parentId}-court-counties" class="counties-field hidden">
+                        <textarea 
+                          name="courtCounties-${parentId}" 
+                          placeholder="Please list the counties/parishes where you can make court appearances"
+                          rows="3"
+                        ></textarea>
+                      </div>
+                      <label>
+                        <input type="checkbox" 
+                               name="fullRepresentation-${parentId}" 
+                               onchange="(function(ch){ toggleCountiesField('${parentId}-full-counties', ch); if(ch) toggleNonePreference('${parentId}', false); })(this.checked)"> 
+                        Taking on full representation
+                      </label>
+                      <div id="${parentId}-full-counties" class="counties-field hidden">
+                        <textarea 
+                          name="representationCounties-${parentId}" 
+                          placeholder="Please list the counties/parishes where you can take on full representation"
+                          rows="3"
+                        ></textarea>
+                      </div>
+                      <label>
+                        <input type="checkbox"
+                               name="none-${parentId}"
+                               onchange="toggleNonePreference('${parentId}', this.checked)">
+                        None
+                      </label>
+                    </div>
+                  </div>
               </div>
             </div>
           `;
@@ -392,14 +406,7 @@
 
 
 
-        <!-- ✅ Only one litigation checkbox, outside the map -->
-        <div class="litigation-row">
-          <label class="litigation-label">
-            <span>Check if you handle litigation in this jurisdiction</span>
-            <input type="checkbox" name="litigation${index}" class="litigation-checkbox" onchange="toggleLitigationCounties(${index}, this.checked)">
-          </label>
-        </div>
-
+        
         ${index > 1 ? `
           <div class="remove-btn-wrapper">
             <button 
@@ -408,6 +415,13 @@
               onclick="removeJurisdictionField(this)">
               Remove This Jurisdiction
             </button>
+          </div>
+        ` : ''}
+        `;
+
+      container.appendChild(div);
+    }
+
     function toggleParent(parentId, index) {
       const parentCheckbox = document.getElementById(parentId);
       const isChecked = parentCheckbox.checked;
@@ -449,11 +463,21 @@
       }
     }
 
-    function toggleLitigationCounties(index, checked) {
-      const wrapper = document.getElementById(`litigationCountiesWrapper-${index}`);
-      if (!wrapper) return;
-      if (checked) wrapper.classList.remove('hidden');
-      else wrapper.classList.add('hidden');
+    // Preference helpers
+    function toggleNonePreference(parentId, checked) {
+      // when None is checked, uncheck court/full and hide their county fields
+      const courtCb = document.querySelector(`input[name="courtAppearances-${parentId}"]`);
+      const fullCb = document.querySelector(`input[name="fullRepresentation-${parentId}"]`);
+      const courtWrapper = document.getElementById(`${parentId}-court-counties`);
+      const fullWrapper = document.getElementById(`${parentId}-full-counties`);
+
+      if (checked) {
+        if (courtCb) { courtCb.checked = false; }
+        if (fullCb) { fullCb.checked = false; }
+        if (courtWrapper) { courtWrapper.classList.add('hidden'); const t=courtWrapper.querySelector('textarea'); if(t) t.value=''; }
+        if (fullWrapper) { fullWrapper.classList.add('hidden'); const t=fullWrapper.querySelector('textarea'); if(t) t.value=''; }
+      }
+      // if None is unchecked, do nothing special — user can check other boxes
     }
 
   </script>
@@ -605,24 +629,18 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
           courtCounties: courtAppearancesCheckbox?.checked ? 
             block.querySelector(`textarea[name="courtCounties-${parentId}"]`)?.value || '' : '',
           fullRepresentation: fullRepCheckbox?.checked || false,
+          none: block.querySelector(`input[name="none-${parentId}"]`)?.checked || false,
           representationCounties: fullRepCheckbox?.checked ?
             block.querySelector(`textarea[name="representationCounties-${parentId}"]`)?.value || '' : ''
         };
       });
-      const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
-
-  const litigationCounties = block.querySelector(`textarea[name="litigationCounties${index}"]`)?.value || "";
-
-
       if (!jurisdiction) continue;
 
       jurisdictionPayloads.push({
         jurisdiction,
         barNumber,
         patentLicense,
-        services,
-        doesLitigation,
-        litigationCounties
+        services
       });
     }
 
