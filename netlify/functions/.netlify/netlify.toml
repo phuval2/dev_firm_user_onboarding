@@ -1,0 +1,30 @@
+functionsDirectory = "C:\\Users\\Patrick Huval\\OneDrive\\Desktop\\Dev-Form2_FirmUserOnboarding\\netlify\\functions\\netlify\\functions"
+functionsDirectoryOrigin = "config"
+plugins = []
+headers = []
+redirects = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "C:\\Users\\Patrick Huval\\OneDrive\\Desktop\\Dev-Form2_FirmUserOnboarding\\netlify\\functions"
+publishOrigin = "config"
+base = "C:\\Users\\Patrick Huval\\OneDrive\\Desktop\\Dev-Form2_FirmUserOnboarding\\netlify\\functions"
+commandOrigin = "ui"
+functions = "C:\\Users\\Patrick Huval\\OneDrive\\Desktop\\Dev-Form2_FirmUserOnboarding\\netlify\\functions\\netlify\\functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]

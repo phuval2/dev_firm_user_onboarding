@@ -3,103 +3,356 @@
 <head>
   <meta charset="UTF-8">
   <title>Firm User Onboarding Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FDE6D0;
+      color: #1A1A1A;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 2em;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    form {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+      box-sizing: border-box;
+      margin: auto;
+    }
     fieldset {
       margin-bottom: 30px;
-      border: 1px solid #ccc;
+      border: 1px solid #ddd;
+      border-radius: 8px;
       padding: 20px;
+    }
+    legend {
+      font-weight: 600;
+      margin-bottom: 10px;
     }
     label {
       display: block;
-      margin-top: 10px;
+      margin-top: 12px;
+      font-size: 0.95em;
     }
-    .subcategory {
-      margin-left: 20px;
+    input, select {
+      width: 100%;
+      padding: 4px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+      margin-top: 5px;
     }
-    .jurisdiction-divider {
-      border-top: 1px solid #999;
+    button {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
       margin-top: 20px;
-      margin-bottom: 20px;
+    }
+    button:hover {
+      background-color: #333;
+    }
+    .category-group > label,
+    .subcategory-block > label,
+    .subcategory label {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: start;
+      gap: 10px;
+      font-size: 0.95em;
+      font-weight: 400;
+      margin: 0;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .category-group > label input[type="checkbox"],
+    .subcategory-block > label input[type="checkbox"],
+    .subcategory label input[type="checkbox"] {
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+
+    .child-category-label {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: start;
+      gap: 10px;
+      font-size: 0.95em;
+      font-weight: 400;
+      margin: 0;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .child-category-label input[type="checkbox"] {
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+
+    .jurisdiction-divider {
+      border-top: 1px solid #ccc;
+      margin: 10px 0;
     }
     .jurisdiction-block {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+      position: relative; 
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
     }
-    .jurisdiction-top {
+
+    .remove-jurisdiction-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      color: #cc0000;
+      border: none;
+      font-size: .9em;
+      font-weight: bold;
+      padding: 0;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .remove-jurisdiction-btn:hover {
+      color: #960000;
+      text-decoration: underline;
+    }
+    .jurisdiction-block > label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      margin-top: 15px;
+      width: fit-content;        
+      white-space: nowrap;       
+    }
+      .jurisdiction-top {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 20px;
+      gap: 10px;
       align-items: end;
+    }
+    .jurisdiction-block a {
+      color: #0077cc;
+      text-decoration: underline;
+      font-size: 0.9em;
+    }
+    .jurisdiction-block a:hover {
+      color: #005fa3;
+    }
+    select option:disabled {
+      color: #999;
+    }
+    p strong {
+      display: block;
+      margin-top: 10px;
     }
   </style>
   <script>
-    const subcategoriesMap = {
-      "Business": ["Business Dispute Assistance", "Contract Dispute Assistance", "Contract Drafting: Complex", "Contract Drafting: Intermediate", "Contract Drafting: Simple", "Contract Review and Advice (Up to 5 Pages)", "Contract Review and Advice (Up to 10 Pages)", "Contract Review and Advice (Up to 20 Pages)", "Debt Collection Assistance"],
-      "Employment": ["Employment Contract Review - Intermediate", "Employment Contract Review - Junior", "Employment Contract Review - Senior", "Employment Law Advice", "Settlement Agreement Review and Advice", "Severance Pay Review and Advice", "Wrongful Termination Review and Advice"],
-      "Estate Planning": ["Advance Medical Directives", "Amendment of an Existing Trust", "Codicil Drafting (Standard)", "Comprehensive Revocable Trust Package (Couple)", "Comprehensive Will Drafting", "Contested Probate Consultation", "Durable Power of Attorney", "Estate Planning Package (Complete)", "Estate Planning Package (Comprehensive)", "Estate Planning Package (Standard)", "Irrevocable Trust", "Medical Power of Attorney", "Probate Consultation", "Revocable Trust", "Revocable Trust with Pour-over Will", "Simple Will Drafting", "Simple Will Package (Couple)", "Standard Revocable Trust Package (Couple)", "Will Review (Complex)", "Will Review (Standard)"],
-      "Family Law": ["Complex Prenuptial Drafting", "Contested Divorce Consultation", "Divorce Consultation (Expedited)", "Family Attorney Advice", "Family Legal Letter", "File a Name Change Petition (Adult)", "File a Name Change Petition (Child)", "Grandparent Rights Advice", "Marital Separation Agreement (Full Service)", "Marital Separation Agreement Drafting", "Marital Separation Agreement Review", "Negotiated Prenuptial Agreement", "Prenuptial Agreement Review and Advice", "Simple Postnuptial Agreement", "Simple Prenuptial Drafting", "Uncontested Child Custody Order", "Uncontested Child Custody Order (Modification)", "Uncontested Divorce (Petition Only)", "Uncontested Divorce Filing (No Minor Children)", "Uncontested Divorce Filing (With Minor Children)", "Uncontested Divorce Review"],
-      "General Case Assessment": ["Attorney Consultation (Advice Only - No Doc Review)", "Attorney Consultation (Up to 30 Pages Doc Review)", "Attorney Consultation (Up to 50 Pages Doc Review)", "Attorney Consultation (Up to 100 Pages Doc Review)", "Attorney Consultation (Up to 150 Pages Doc Review)"],
-      "Immigration": ["Citizenship Advice", "Citizenship Application Filing", "EB1 Visa Petition Filing", "EB2 NIW Visa Petition Filing", "EB3 Visa Petition Filing", "Family Green Card Review and Advice", "Family Immigration Review and Advice", "H1B Visa Petition Filing", "K1 Visa Petition Filing", "Marriage Green Card Review and Advice", "NOID Advice", "O1 Visa Petition Filing", "RFE Advice", "TN Visa Petition Filing"],
-      "Intellectual Property": ["Basic Trademark Office Action Replies", "Cease and Desist Letter Drafting", "Complex Office Action Response - Multiple Issues", "Complex Office Action Response - Single Issue", "Copyright Filing Serial Works", "Copyright Filing Single Work", "Design Patent Application", "Intellectual Property Advice", "Nonprovisional Biological Electrical and Software Patent Filing", "Nonprovisional Computer and Business Method Patent Filing", "Nonprovisional Mechanical Patent Filing", "Patent Consultation Review and Advice", "Patent Search", "Provisional Patent Application", "Response to Opposition", "Trademark Application Filing", "Trademark Application Full Service", "Trademark Infringement Review and Advice", "Trademark Search Assessment"],
-      "Landlord and Tenant": ["Commercial Lease Review and Advice", "Eviction Consultation", "Eviction Notice Drafting (with cause)", "Eviction Notice Drafting (without cause)", "Eviction Package", "Eviction Suit Review", "Lease Violation Advice", "Residential Lease Agreement Drafting", "Residential Lease Review and Advice", "Tenant Eviction Advice"],
-      "Lawsuits and Disputes": ["Civil Litigation Assistance", "Demand Letter Drafting", "Demand Letter Drafting (stand alone)", "Home Owners Association Dispute Assistance", "Neighbor Dispute Assistance", "Property Dispute Assistance", "Small Claims Assistance"]
-    };
+    let subcategoriesMap = {};
 
-    function toggleAttorneyFields() {
-      const role = document.getElementById('role').value;
+    async function fetchCategoriesFromAirtable() {
+      try {
+        const response = await fetch("/.netlify/functions/getCategories");
+        const map = await response.json();
+        subcategoriesMap = map;
+      } catch (err) {
+        console.error("Failed to load categories from server", err);
+      }
+    }
+
+    async function toggleAttorneyFields() {
+      const isAttorney = document.getElementById('isAttorney').checked;
       const attorneyFields = document.getElementById('attorneyFields');
       const dateAdmittedLabel = document.getElementById('dateAdmittedLabel');
+      const jurisdictionContainer = document.getElementById('jurisdictionContainer');
 
-      if (role === 'Attorney') {
+      if (isAttorney) {
         attorneyFields.style.display = 'block';
         dateAdmittedLabel.style.display = 'block';
+        jurisdictionContainer.innerHTML = '';
+
+        if (!categoriesFetched) {
+          await fetchCategoriesFromAirtable();
+          categoriesFetched = true;
+        }
+
         addJurisdictionField();
       } else {
         attorneyFields.style.display = 'none';
         dateAdmittedLabel.style.display = 'none';
-        document.getElementById('jurisdictionContainer').innerHTML = '';
+        jurisdictionContainer.innerHTML = '';
       }
     }
 
+    function removeJurisdictionField(button) {
+      const allBlocks = document.querySelectorAll('.jurisdiction-block');
+      if (allBlocks.length <= 1) {
+        alert("At least one jurisdiction is required.");
+        return;
+      }
+
+      const jurisdictionBlock = button.closest('.jurisdiction-block');
+      if (jurisdictionBlock) {
+        jurisdictionBlock.remove();
+      }
+    }
+    
     function addJurisdictionField() {
+      const isAttorney = document.getElementById('isAttorney').checked;
+      const requiredAttr = isAttorney ? 'required' : '';
       const container = document.getElementById('jurisdictionContainer');
       const index = container.children.length + 1;
 
       const div = document.createElement('div');
       div.className = 'jurisdiction-block';
-      div.setAttribute('data-index', index); // 🔥 Add this
+      div.setAttribute('data-index', index);
+      console.log("🧪 subcategoriesMap", subcategoriesMap);
       div.innerHTML = `
         <div class="jurisdiction-divider"></div>
         <div class="jurisdiction-top">
           <label>Jurisdiction:
-            <select required name="jurisdiction${index}">
+            <select name="jurisdiction${index}" ${requiredAttr}>
               <option disabled selected value="">Select your jurisdiction</option>
               <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>District of Columbia</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>American Samoa</option><option>Guam</option><option>Northern Mariana Islands</option><option>Puerto Rico</option><option>U.S. Virgin Islands</option>
             </select>
           </label>
           <label>Bar Number:
-            <input type="text" required name="barNumber${index}">
+            <input type="text" name="barNumber${index}" ${requiredAttr}>
           </label>
-          ${index === 1 ? '<label>Patent License Number:<input type="text" name="patentLicense"></label>' : ''}
+          ${index === 1 ? `<label>Patent License Number:<input type="text" name="patentLicense"></label>` : ''}
         </div>
-        <p><strong>Select services for this jurisdiction:</strong> (Federal services should only be selected for the first jurisdiction)</p>
-        ${Object.keys(subcategoriesMap).map(parent => `
-          <label><input type="checkbox" name="parent${index}" value="${parent}" onchange="toggleSubcategories(this, ${index})"> ${parent}</label>
-          <div class="subcategory" id="sub-${parent.replace(/\s+/g, '')}-${index}" style="display:none">
-            ${subcategoriesMap[parent].map(child => `<label><input type="checkbox" name="child${index}" value="${child}"> ${child}</label>`).join('')}
-          </div>`).join('')}
-      `;
+        <p>
+          <strong>Select services for this jurisdiction:</strong>
+          (Federal services should only be selected for the first jurisdiction)<br>
+          <a href="https://docs.google.com/spreadsheets/d/1fK4PtwzajaIWz5maWKXiFa7k4F2O3bbpPS3VRAvWbAM/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">
+            Click here to view the full scope and price for each product
+          </a>
+        </p>
+        ${Object.entries(subcategoriesMap).map(([parentCategory, subcategories]) => {
+          const parentId = `parent-${parentCategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
+          return `
+            <div class="category-group" style="margin-top: 20px;">
+              <label>
+                <input 
+                  type="checkbox" 
+                  id="${parentId}"
+                  name="parentCategory-${index}" 
+                  value="${parentCategory}" 
+                  onchange="toggleParent('${parentId}', ${index})"
+                > <strong>${parentCategory}</strong>
+              </label>
+              <div id="${parentId}-children" style="margin-left: 20px; display:none;">
+                ${Object.entries(subcategories).map(([subcategory, products]) => {
+                  const subId = `subcategory-${subcategory.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
+                  return `
+                    <div class="subcategory-block" style="margin-top: 10px;">
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          id="${subId}" 
+                          name="subcategory-${index}" 
+                          value="${subcategory}" 
+                          onchange="toggleSubcategory('${subId}', ${index})"
+                        > ${subcategory}
+                      </label>
+                      <div id="${subId}-children" style="margin-left: 20px; display:none;">
+                        ${products.map(product => `
+                          <label class="child-category-label">
+                            <input 
+                              type="checkbox" 
+                              name="child${index}" 
+                              value="${product}" 
+                              data-category="${parentCategory}" 
+                              data-subcategory="${subcategory}"
+                            > ${product}
+                          </label>
+                        `).join('')}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('')}
+
+        
+
+
+
+        <!-- ✅ Only one litigation checkbox, outside the map -->
+        <div style="margin-top: 10px;">
+          <label style="white-space: nowrap; font-weight: 400; display: inline-block;">
+            <span>Check if you handle litigation in this jurisdiction</span>
+            <input type="checkbox" name="litigation${index}" style="margin-left: -110px; vertical-align: middle; transform: translateY(-2px);">
+          </label>
+        </div>
+
+        ${index > 1 ? `
+          <div class="remove-btn-wrapper">
+            <button 
+              type="button" 
+              class="remove-jurisdiction-btn" 
+              onclick="removeJurisdictionField(this)">
+              Remove This Jurisdiction
+            </button>
+          </div>
+        ` : ''}
+        `;
+
       container.appendChild(div);
     }
 
-    function toggleSubcategories(parentCheckbox, index) {
-      const subId = `sub-${parentCheckbox.value.replace(/\s+/g, '')}-${index}`;
-      const subDiv = document.getElementById(subId);
-      subDiv.style.display = parentCheckbox.checked ? 'block' : 'none';
-      const checkboxes = subDiv.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(cb => cb.checked = parentCheckbox.checked);
+    function toggleParent(parentId, index) {
+      const parentCheckbox = document.getElementById(parentId);
+      const isChecked = parentCheckbox.checked;
+      const children = document.getElementById(`${parentId}-children`);
+
+      children.style.display = isChecked ? 'block' : 'none';
+
+      // Uncheck and collapse all subcategories and children if unchecked
+      if (!isChecked) {
+        const subcategoryCheckboxes = children.querySelectorAll(`input[name="subcategory-${index}"]`);
+        subcategoryCheckboxes.forEach(subCb => {
+          subCb.checked = false;
+
+          const subId = subCb.id;
+          const serviceBlock = document.getElementById(`${subId}-children`);
+          if (serviceBlock) {
+            serviceBlock.style.display = 'none';
+            serviceBlock.querySelectorAll('input[type="checkbox"]').forEach(childCb => {
+              childCb.checked = false;
+            });
+          }
+        });
+      }
     }
+
+    function toggleSubcategory(subId, index) {
+      const isChecked = document.getElementById(subId).checked;
+      const serviceBlock = document.getElementById(`${subId}-children`);
+      serviceBlock.style.display = isChecked ? 'block' : 'none';
+
+      serviceBlock.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = isChecked;
+      });
+    }
+
   </script>
 </head>
 <body>
@@ -110,20 +363,25 @@
       <label>First Name: <input type="text" name="firstName" required></label>
       <label>Last Name: <input type="text" name="lastName" required></label>
       <label>Email: <input type="email" name="email" required></label>
-      <label>Phone: <input type="tel" name="phone" required></label>
-      <label>Role:
-        <select name="role" id="role" required onchange="toggleAttorneyFields()">
-          <option disabled selected>Select role</option>
-          <option value="Attorney">Attorney</option>
-          <option value="Admin">Admin</option>
-          <option value="Assistant">Assistant</option>
-        </select>
+      <label>Office Phone: <input type="tel" name="office phone"></label>
+      <label>Cell Phone: <input type="tel" name="cell phone"></label>
+      <label style="display: flex; align-items: center; white-space: nowrap;">
+        <span style="margin-right: 8px;">Are you an attorney?</span>
+        <input 
+          type="checkbox" 
+          name="isAttorney" 
+          id="isAttorney" 
+          onchange="toggleAttorneyFields()"
+          style="transform: translateX(-260px);"
+        >
       </label>
+
       <label id="dateAdmittedLabel" style="display: none;">
         Date First Admitted to Bar:
         <input type="date" name="dateAdmitted" id="dateAdmitted">
       </label>
       <label>Firm Name: <input type="text" name="firmName" required></label>
+      <label>Job Title: <input type="text" name="jobTitle" required></label>
     </fieldset>
 
     <div id="attorneyFields" style="display:none;">
@@ -133,11 +391,32 @@
         <button type="button" onclick="addJurisdictionField()">Add Another Jurisdiction</button>
       </fieldset>
     </div>
-    <button type="submit">Submit</button>
+    <button type="submit" id="submitBtn">Submit</button>
   </form>
 <script>
-  document.getElementById("attorneyForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
+  let isSubmitting = false;
+  let categoriesFetched = false;
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    // Ensure categories are loaded on page load
+    await fetchCategoriesFromAirtable();
+    categoriesFetched = true;
+
+    // Prefill jurisdiction fields if attorney box is already checked
+    if (document.getElementById("isAttorney").checked) {
+      toggleAttorneyFields();
+    }
+  });
+
+document.getElementById("attorneyForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      if (isSubmitting) return;
+      isSubmitting = true;
+
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Submitting...";
 
     const formData = new FormData(e.target);
 
@@ -145,11 +424,18 @@
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
       email: formData.get("email"),
-      phone: formData.get("phone"),
-      role: formData.get("role"),
+      officePhone: formData.get("office phone"),      
+      cellPhone: formData.get("cell phone"),  
+      isAttorney: formData.get("isAttorney") === "on",
       firmName: formData.get("firmName"),
-      dateAdmitted: formData.get("dateAdmitted") || null
+      jobTitle: formData.get("jobTitle")
     };
+
+
+    const dateAdmittedValue = formData.get("dateAdmitted");
+    if (dateAdmittedValue) {
+      userFields.dateAdmitted = dateAdmittedValue;
+    }
 
     const jurisdictionBlocks = document.querySelectorAll(".jurisdiction-block");
     const jurisdictionPayloads = [];
@@ -160,8 +446,13 @@
       const jurisdiction = block.querySelector(`select[name="jurisdiction${index}"]`)?.value || "";
       const barNumber = block.querySelector(`input[name="barNumber${index}"]`)?.value || "";
       const patentLicense = block.querySelector(`input[name="patentLicense"]`)?.value || "";
-      const parentCategories = Array.from(block.querySelectorAll(`input[name="parent${index}"]:checked`)).map(cb => cb.value);
-      const services = Array.from(block.querySelectorAll(`input[name="child${index}"]:checked`)).map(cb => cb.value);
+      const services = Array.from(block.querySelectorAll(`input[name="child${index}"]:checked`)).map(cb => ({
+        product: cb.value,
+        category: cb.dataset.category,
+        subcategory: cb.dataset.subcategory
+      }));
+      const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
+
 
       if (!jurisdiction) continue;
 
@@ -169,32 +460,43 @@
         jurisdiction,
         barNumber,
         patentLicense,
-        parentCategories,
-        services
+        services,
+        doesLitigation
       });
     }
 
     try {
+      const payload = { userFields };
+
+      if (userFields.isAttorney) {
+        payload.jurisdictionPayloads = jurisdictionPayloads;
+      }
+
       const response = await fetch("/.netlify/functions/submitForm", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        userFields,
-        jurisdictionPayloads
-      })
-    });
-
+        },
+        body: JSON.stringify(payload)
+      });
 
       if (!response.ok) throw new Error("Webhook failed");
 
       alert("Form submitted successfully!");
       e.target.reset();
       document.getElementById("jurisdictionContainer").innerHTML = "";
+      document.getElementById("attorneyFields").style.display = "none";
+      document.getElementById("dateAdmittedLabel").style.display = "none";
+      document.getElementById("isAttorney").checked = false;
+      isSubmitting = false;
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
     } catch (error) {
       console.error("Submission error:", error);
       alert("There was an error submitting the form. Please try again.");
+      isSubmitting = false;
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
     }
   });
 </script>
