@@ -97,11 +97,13 @@
     .checkbox-label{display:flex; align-items:center; gap:10px;}
     .checkbox-label input{width:auto}
 
-    .category-group{margin-top:18px; padding:12px; border-radius:10px; background: linear-gradient(180deg, rgba(15,23,36,0.01), rgba(15,23,36,0.02)); border:1px solid rgba(15,23,36,0.03)}
-    .subcategory-block{margin-top:12px; padding:10px; border-radius:8px; background:rgba(255,255,255,0.6)}
-    .children-block{margin-left:18px}
+  /* Slightly tighter parent category spacing and darker card backgrounds */
+  .category-group{margin-top:10px; padding:12px; border-radius:10px; background: linear-gradient(180deg, rgba(15,23,36,0.03), rgba(15,23,36,0.04)); border:1px solid rgba(15,23,36,0.06)}
+  .subcategory-block{margin-top:8px; padding:10px; border-radius:8px; background:rgba(255,255,255,0.72)}
+  .children-block{margin-left:14px}
 
-    .attorney-preferences {margin:14px 0 0 0; padding:14px; background:linear-gradient(180deg, rgba(15,23,36,0.02), rgba(15,23,36,0.01)); border-radius:8px; border:1px solid rgba(15,23,36,0.03)}
+  /* Darken preference block background slightly for more contrast */
+  .attorney-preferences {margin:14px 0 0 0; padding:14px; background:linear-gradient(180deg, rgba(15,23,36,0.06), rgba(15,23,36,0.04)); border-radius:8px; border:1px solid rgba(15,23,36,0.06)}
     .attorney-preferences p {margin:0 0 6px 0; font-weight:600}
 
     .preference-options {display:flex; flex-direction:column; gap:10px}
