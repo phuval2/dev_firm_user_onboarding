@@ -28,12 +28,24 @@ async function getSubcategoriesMap() {
   const map = {};
 
   for (const record of records) {
-    const parent = record.fields["Category"]?.trim();
-    const child = record.fields["Product Name"]?.trim();
-    if (!parent || !child) continue;
-    if (!map[parent]) map[parent] = [];
-    if (!map[parent].includes(child)) {
-      map[parent].push(child);
+    const category = record.fields["Category"]?.trim();
+    const subcategory = record.fields["Sub Category"]?.trim() || "Uncategorized";
+    const product = record.fields["Product Name"]?.trim();
+
+    if (!category || !product) continue;
+
+    if (!map[category]) map[category] = {};
+    if (!map[category][subcategory]) map[category][subcategory] = [];
+
+    if (!map[category][subcategory].includes(product)) {
+      map[category][subcategory].push(product);
+    }
+  }
+
+  // Sort products alphabetically within each subcategory
+  for (const category in map) {
+    for (const subcategory in map[category]) {
+      map[category][subcategory].sort((a, b) => a.localeCompare(b));
     }
   }
 
@@ -87,9 +99,8 @@ export async function handler(event) {
     if (userFields.isAttorney && Array.isArray(jurisdictionPayloads)) {
       for (const j of jurisdictionPayloads) {
         for (const service of j.services) {
-          const parentCategory = Object.entries(subcategoriesMap).find(([parent, children]) =>
-            children.includes(service.product)
-          )?.[0] || "Unknown";
+          // We already have the category and subcategory from the form data
+          const parentCategory = service.category || "Unknown";
 
 
           await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/Jurisdictions`, {
