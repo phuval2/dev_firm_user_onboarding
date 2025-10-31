@@ -283,22 +283,8 @@
         <div class="litigation-row">
           <label class="litigation-label">
             <span>Check if you handle litigation in this jurisdiction</span>
-            <input 
-              type="checkbox" 
-              name="litigation${index}" 
-              class="litigation-checkbox"
-              onchange="toggleLitigationCounties(this, ${index})"
-            >
+            <input type="checkbox" name="litigation${index}" class="litigation-checkbox">
           </label>
-        </div>
-        
-        <div id="litigationCounties${index}" class="field hidden" style="margin-top: 10px;">
-          <label>What counties/parishes do you represent/litigate in for this jurisdiction?</label>
-          <input 
-            type="text" 
-            name="litigationCounties${index}" 
-            placeholder="e.g., Harris County, Dallas County"
-          >
         </div>
 
         ${index > 1 ? `
@@ -341,19 +327,6 @@
             });
           }
         });
-      }
-    }
-
-    function toggleLitigationCounties(checkbox, index) {
-      const countiesField = document.getElementById(`litigationCounties${index}`);
-      if (countiesField) {
-        if (checkbox.checked) {
-          countiesField.classList.remove('hidden');
-          countiesField.querySelector('input').required = true;
-        } else {
-          countiesField.classList.add('hidden');
-          countiesField.querySelector('input').required = false;
-        }
       }
     }
 
@@ -511,9 +484,7 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
         subcategory: cb.dataset.subcategory
       }));
       const doesLitigation = block.querySelector(`input[name="litigation${index}"]`)?.checked ? "True" : "False";
-      const litigationCounties = doesLitigation === "True" 
-        ? block.querySelector(`input[name="litigationCounties${index}"]`)?.value || ""
-        : "";
+
 
       if (!jurisdiction) continue;
 
@@ -522,8 +493,7 @@ document.getElementById("attorneyForm").addEventListener("submit", async functio
         barNumber,
         patentLicense,
         services,
-        doesLitigation,
-        litigationCounties
+        doesLitigation
       });
     }
 
